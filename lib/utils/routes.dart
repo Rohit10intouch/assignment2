@@ -1,4 +1,6 @@
+import 'package:assignment2/screen/news_screen.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../screen/home_screen.dart';
 
@@ -28,6 +30,7 @@ class SlidePageRoute extends PageRouteBuilder {
 
 class Routes {
   static const String homeScreen = '/homeScreen';
+  static const String newsScreen = '/newsScreen';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -35,12 +38,36 @@ class Routes {
         return SlidePageRoute(
           builder: (context) => const HomeScreen(),
         );
-      default:
-        return SlidePageRoute(builder: (context) {
-          return Container(
-            child: Text('Route Not Available for ${settings.name}'),
+
+      case newsScreen:
+      // Ensure settings.arguments is not null and is of the correct type
+        if (settings.arguments is Map<String, dynamic>) {
+          final args = settings.arguments as Map<String, dynamic>;
+          return SlidePageRoute(
+            builder: (context) => NewsDetailScreen(
+              title: args['title'],
+              description: args['description'],
+              imageUrl: args['imageUrl'],
+              publishedDate: args['publishedDate'],
+              isFavorite: args['isFavorite'],
+              onToggleFavorite: args['onToggleFavorite'],
+            ),
           );
-        });
+        } else {
+          return _errorRoute();
+        }
+      default:
+        return _errorRoute();
     }
+  }
+
+  static Route<dynamic> _errorRoute() {
+    return SlidePageRoute(
+      builder: (context) => Scaffold(
+        body: Center(
+          child: Text('Route Not Available'),
+        ),
+      ),
+    );
   }
 }
